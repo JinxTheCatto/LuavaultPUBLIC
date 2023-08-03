@@ -10,9 +10,9 @@ License: MIT
 
 local DEFAULT_SETTINGS = {
 
-	TIME_VARIANCE = 0.01;
+	TIME_VARIANCE = 1;
 
-	COMPARISON_CHECKS = 5;
+	COMPARISON_CHECKS = 1;
 
 	JUMP_WHEN_STUCK = true;
 }
@@ -303,6 +303,7 @@ function Path:Run(target)
 		self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
 		task.wait()
 		declareError(self, self.ErrorType.ComputationError)
+		warn("COMP FAILED: ".._)
 		return false
 	end
 
