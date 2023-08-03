@@ -291,11 +291,15 @@ function Path:Run(target)
 	end
 
 	--Compute path
+	local Timer = false
+	task.delay(5, function()
+		Timer = true
+	end)
 	local pathComputed, err = pcall(function()
 		repeat
 			self._path:ComputeAsync(self._agent.PrimaryPart.Position, (typeof(target) == "Vector3" and target) or target.Position)
 			task.wait()
-		until self._path.Status ~= Enum.PathStatus.NoPath and #self._path:GetWaypoints() >= 2
+		until (self._path.Status ~= Enum.PathStatus.NoPath and #self._path:GetWaypoints() > 2) or Timer
 	end)
 
 	--Make sure path computation is successful
