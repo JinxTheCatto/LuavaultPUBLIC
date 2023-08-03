@@ -291,7 +291,7 @@ function Path:Run(target)
 	end
 
 	--Compute path
-	local pathComputed, _ = pcall(function()
+	local pathComputed, err = pcall(function()
 		self._path:ComputeAsync(self._agent.PrimaryPart.Position, (typeof(target) == "Vector3" and target) or target.Position)
 	end)
 
@@ -303,7 +303,7 @@ function Path:Run(target)
 		self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
 		task.wait()
 		declareError(self, self.ErrorType.ComputationError)
-		warn("COMP FAILED: ".._)
+		warn("COMP FAILED: "..err)
 		return false
 	end
 
