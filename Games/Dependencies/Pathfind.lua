@@ -295,6 +295,7 @@ function Path:Run(target)
 	task.delay(5, function()
 		Timer = true
 	end)
+	-- first check
 	local pathComputed, err = pcall(function()
 		repeat
 			self._path:ComputeAsync(self._agent.PrimaryPart.Position, (typeof(target) == "Vector3" and target) or target.Position)
@@ -306,7 +307,7 @@ function Path:Run(target)
 	if not pathComputed then
 		self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
 		task.wait()
-		warn("COMPUTE ERROR "..err)
+		--warn("COMPUTE ERROR "..err)
 		declareError(self, self.ErrorType.ComputationError)
 		return false
 	end
