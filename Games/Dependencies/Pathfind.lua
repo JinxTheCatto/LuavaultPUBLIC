@@ -295,7 +295,7 @@ function Path:Run(target)
 		repeat
 			self._path:ComputeAsync(self._agent.PrimaryPart.Position, (typeof(target) == "Vector3" and target) or target.Position)
 			task.wait()
-		until self._path.Status ~= Enum.PathStatus.NoPath
+		until self._path.Status ~= Enum.PathStatus.NoPath and #self._path:GetWaypoints() >= 2
 	end)
 
 	--Make sure path computation is successful
