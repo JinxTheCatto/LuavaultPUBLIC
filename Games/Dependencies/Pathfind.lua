@@ -299,11 +299,10 @@ function Path:Run(target)
 	if not pathComputed
 		or self._path.Status == Enum.PathStatus.NoPath
 		or #self._path:GetWaypoints() < 2
-		or (self._humanoid and self._humanoid:GetState() == Enum.HumanoidStateType.Freefall) then
+		--[[or (self._humanoid and self._humanoid:GetState() == Enum.HumanoidStateType.Freefall)]] then
 		self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
 		task.wait()
 		declareError(self, self.ErrorType.ComputationError)
-		warn("COMP FAILED: "..err)
 		return false
 	end
 
