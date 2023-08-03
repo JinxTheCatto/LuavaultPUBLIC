@@ -292,7 +292,10 @@ function Path:Run(target)
 
 	--Compute path
 	local pathComputed, err = pcall(function()
-		self._path:ComputeAsync(self._agent.PrimaryPart.Position, (typeof(target) == "Vector3" and target) or target.Position)
+		repeat
+			self._path:ComputeAsync(self._agent.PrimaryPart.Position, (typeof(target) == "Vector3" and target) or target.Position)
+			task.wait()
+		until self._path.Status ~= Enum.PathStatus.NoPath
 	end)
 
 	--Make sure path computation is successful
