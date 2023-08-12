@@ -7,7 +7,7 @@
 -- Common Locals
 local Main,Lib,Apps,Settings -- Main Containers
 local Explorer, Properties, ScriptViewer, Notebook -- Major Apps
-local API,RMD,env,service,create,createSimple -- Main Locals
+local API,RMD,env,service,plr,create,createSimple -- Main Locals
 
 local function initDeps(data)
 	Main = data.Main
@@ -18,7 +18,8 @@ local function initDeps(data)
 	API = data.API
 	RMD = data.RMD
 	env = data.env
-	service = game
+	service = data.service
+	plr = data.plr
 	create = data.create
 	createSimple = data.createSimple
 end
@@ -33,7 +34,7 @@ end
 local function main()
 	local Lib = {}
 
-	local renderStepped = game.RunService.RenderStepped
+	local renderStepped = service.RunService.RenderStepped
 	local signalWait = renderStepped.wait
 	local PH = newproxy() -- Placeholder, must be replaced in constructor
 	local SIGNAL = newproxy()
@@ -94,11 +95,11 @@ local function main()
 	end
 
 	Lib.IsShiftDown = function()
-		return game.UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) or game.UserInputService:IsKeyDown(Enum.KeyCode.RightShift)
+		return service.UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) or service.UserInputService:IsKeyDown(Enum.KeyCode.RightShift)
 	end
 
 	Lib.IsCtrlDown = function()
-		return game.UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or game.UserInputService:IsKeyDown(Enum.KeyCode.RightControl)
+		return service.UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or service.UserInputService:IsKeyDown(Enum.KeyCode.RightControl)
 	end
 
 	Lib.CreateArrow = function(size,num,dir)
@@ -662,8 +663,8 @@ local function main()
 
 	Lib.ScrollBar = (function()
 		local funcs = {}
-		local user = game.UserInputService
-		local mouse = game.Players.LocalPlayer:GetMouse()
+		local user = service.UserInputService
+		local mouse = plr:GetMouse()
 		local checkMouseInGui = Lib.CheckMouseInGui
 		local createArrow = Lib.CreateArrow
 
@@ -1071,7 +1072,7 @@ local function main()
 	Lib.Window = (function()
 		local funcs = {}
 		local static = {MinWidth = 200, FreeWidth = 200}
-		local mouse = game.Players.LocalPlayer:GetMouse()
+		local mouse = plr:GetMouse()
 		local sidesGui,alignIndicator
 		local visibleWindows = {}
 		local leftSide = {Width = 300, Windows = {}, ResizeCons = {}, Hidden = true}
@@ -1118,7 +1119,7 @@ local function main()
 						self.Resizing = resizer
 						resizer.BackgroundTransparency = 1
 
-						releaseEvent = game.UserInputService.InputEnded:Connect(function(input)
+						releaseEvent = service.UserInputService.InputEnded:Connect(function(input)
 							if input.UserInputType == Enum.UserInputType.MouseButton1 then
 								releaseEvent:Disconnect()
 								mouseEvent:Disconnect()
@@ -1127,7 +1128,7 @@ local function main()
 							end
 						end)
 
-						mouseEvent = game.UserInputService.InputChanged:Connect(function(input)
+						mouseEvent = service.UserInputService.InputChanged:Connect(function(input)
 							if self.Resizable and self.ResizableInternal and input.UserInputType == Enum.UserInputType.MouseMovement then
 								self:StopTweens()
 								local deltaX = input.Position.X - resizer.AbsolutePosition.X - offX
@@ -1408,7 +1409,7 @@ local function main()
 
 			if not noTween then
 				local function insertTween(...)
-					local tween = game.TweenService:Create(...)
+					local tween = service.TweenService:Create(...)
 					tweens[#tweens+1] = tween
 					tween:Play()
 				end
@@ -1462,7 +1463,7 @@ local function main()
 						side.Resizing = resizer
 						resizer.BackgroundColor3 = theme.MainColor2
 
-						releaseEvent = game.UserInputService.InputEnded:Connect(function(input)
+						releaseEvent = service.UserInputService.InputEnded:Connect(function(input)
 							if input.UserInputType == Enum.UserInputType.MouseButton1 then
 								releaseEvent:Disconnect()
 								mouseEvent:Disconnect()
@@ -1471,7 +1472,7 @@ local function main()
 							end
 						end)
 
-						mouseEvent = game.UserInputService.InputChanged:Connect(function(input)
+						mouseEvent = service.UserInputService.InputChanged:Connect(function(input)
 							if not resizer.Parent then
 								releaseEvent:Disconnect()
 								mouseEvent:Disconnect()
@@ -1561,7 +1562,7 @@ local function main()
 					v.GuiElems.Main.Size = size
 					v.GuiElems.Main.Position = pos
 				else
-					local tween = game.TweenService:Create(v.GuiElems.Main,sideTweenInfo,{Size = size, Position = pos})
+					local tween = service.TweenService:Create(v.GuiElems.Main,sideTweenInfo,{Size = size, Position = pos})
 					tweens[#tweens+1] = tween
 					tween:Play()
 				end
@@ -1813,7 +1814,7 @@ local function main()
 		end
 
 		funcs.DoTween = function(self,...)
-			local tween = game.TweenService:Create(...)
+			local tween = service.TweenService:Create(...)
 			self.Tweens[#self.Tweens+1] = tween
 			tween:Play()
 		end
@@ -1831,7 +1832,7 @@ local function main()
 
 		funcs.ShowAndFocus = function(self,data)
 			static.ShowWindow(self,data)
-			game.RunService.RenderStepped:wait()
+			service.RunService.RenderStepped:wait()
 			self:Focus()
 		end
 
@@ -2154,7 +2155,7 @@ local function main()
 
 		funcs.AddDivider = function(self,text)
 			self.QueuedDivider = false
-			local textWidth = text and game.TextService:GetTextSize(text,14,Enum.Font.SourceSans,Vector2.new(999999999,20)).X or nil
+			local textWidth = text and service.TextService:GetTextSize(text,14,Enum.Font.SourceSans,Vector2.new(999999999,20)).X or nil
 			table.insert(self.Items,{Divider = true, Text = text, TextSize = textWidth and textWidth+4})
 			self.Updated = nil
 		end
@@ -2307,7 +2308,7 @@ local function main()
 			-- Close event
 			local closable
 			if self.CloseEvent then self.CloseEvent:Disconnect() end
-			self.CloseEvent = game.UserInputService.InputBegan:Connect(function(input)
+			self.CloseEvent = service.UserInputService.InputBegan:Connect(function(input)
 				if not closable or input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 
 				if not Lib.CheckMouseInGui(elems.Main) then
@@ -2350,7 +2351,7 @@ local function main()
 
 		local mt = {__index = funcs}
 		local function new()
-			if not mouse then mouse = Main.Mouse or game.Players.LocalPlayer:GetMouse() end
+			if not mouse then mouse = Main.Mouse or service.Players.LocalPlayer:GetMouse() end
 
 			local obj = setmetatable({
 				Width = 200,
@@ -2529,7 +2530,7 @@ local function main()
 			[("%s [^%s]"):format(tabSub,tabSub)] = 1,
 		}
 		
-		local tweenService = game.TweenService
+		local tweenService = service.TweenService
 		local lineTweens = {}
 
 		local function initBuiltIn()
@@ -2579,7 +2580,7 @@ local function main()
 		end
 		
 		local function setupMouseSelection(obj)
-			local mouse = game.Players.LocalPlayer:GetMouse()
+			local mouse = plr:GetMouse()
 			local codeFrame = obj.GuiElems.LinesFrame
 			local lines = obj.Lines
 			
@@ -2622,7 +2623,7 @@ local function main()
 						obj:Refresh()
 					end
 
-					releaseEvent = game.UserInputService.InputEnded:Connect(function(input)
+					releaseEvent = service.UserInputService.InputEnded:Connect(function(input)
 						if input.UserInputType == Enum.UserInputType.MouseButton1 then
 							releaseEvent:Disconnect()
 							mouseEvent:Disconnect()
@@ -2632,7 +2633,7 @@ local function main()
 						end
 					end)
 
-					mouseEvent = game.UserInputService.InputChanged:Connect(function(input)
+					mouseEvent = service.UserInputService.InputChanged:Connect(function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							local upDelta = mouse.Y - codeFrame.AbsolutePosition.Y
 							local downDelta = mouse.Y - codeFrame.AbsolutePosition.Y - codeFrame.AbsoluteSize.Y
@@ -2769,7 +2770,7 @@ local function main()
 				self.EditBoxEvent:Disconnect()
 			end
 			
-			self.EditBoxEvent = game.UserInputService.InputBegan:Connect(function(input)
+			self.EditBoxEvent = service.UserInputService.InputBegan:Connect(function(input)
 				if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
 				
 				local keycodes = Enum.KeyCode
@@ -2777,7 +2778,7 @@ local function main()
 				
 				local function setupMove(key,func)
 					local endCon,finished
-					endCon = game.UserInputService.InputEnded:Connect(function(input)
+					endCon = service.UserInputService.InputEnded:Connect(function(input)
 						if input.KeyCode ~= key then return end
 						endCon:Disconnect()
 						finished = true
@@ -2881,7 +2882,7 @@ local function main()
 						self:ResetSelection(true)
 						self:JumpToCursor()
 					end)
-				elseif game.UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
+				elseif service.UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
 					if keycode == keycodes.A then
 						self.SelectionRange = {{0,0},{#self.Lines[#self.Lines],#self.Lines-1}}
 						self:SetCopyableSelection()
@@ -3697,9 +3698,9 @@ local function main()
 			local size = max(abssz.X, abssz.Y) * 5/3
 
 			TweenSize(circle, ud2o(size, size), "Out", "Quart", 0.4)
-			game.TweenService:Create(circle, ti(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {BackgroundTransparency = 1}):Play()
+			service.TweenService:Create(circle, ti(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {BackgroundTransparency = 1}):Play()
 
-			game.Debris:AddItem(circle, 0.4)
+			service.Debris:AddItem(circle, 0.4)
 		end
 
 		local function initGui(self,frame)
@@ -3742,7 +3743,7 @@ local function main()
 			checkbox.InputBegan:Connect(function(i)
 				if i.UserInputType == Enum.UserInputType.MouseButton1 then
 					local release
-					release = game.UserInputService.InputEnded:Connect(function(input)
+					release = service.UserInputService.InputEnded:Connect(function(input)
 						if input.UserInputType == Enum.UserInputType.MouseButton1 then
 							release:Disconnect()
 
@@ -3825,7 +3826,7 @@ local function main()
 			if self.Toggled then
 				if self.Style == 0 then
 					if anim then
-						self.OutlineColorTween = game.TweenService:Create(self.GuiElems.Outline, ti(4/15, Enum.EasingStyle.Circular, Enum.EasingDirection.Out), {BackgroundColor3 = self.Colors.Primary})
+						self.OutlineColorTween = service.TweenService:Create(self.GuiElems.Outline, ti(4/15, Enum.EasingStyle.Circular, Enum.EasingDirection.Out), {BackgroundColor3 = self.Colors.Primary})
 						self.OutlineColorTween:Play()
 						delay(0.15, function()
 							if setStateTime ~= self.LastSetStateTime then return end
@@ -3846,7 +3847,7 @@ local function main()
 			else
 				if self.Style == 0 then
 					if anim then
-						self.OutlineColorTween = game.TweenService:Create(self.GuiElems.Outline, ti(4/15, Enum.EasingStyle.Circular, Enum.EasingDirection.In), {BackgroundColor3 = self.Colors.Secondary})
+						self.OutlineColorTween = service.TweenService:Create(self.GuiElems.Outline, ti(4/15, Enum.EasingStyle.Circular, Enum.EasingDirection.In), {BackgroundColor3 = self.Colors.Secondary})
 						self.OutlineColorTween:Play()
 						delay(0.15, function()
 							if setStateTime ~= self.LastSetStateTime then return end
@@ -3910,7 +3911,7 @@ local function main()
 	Lib.BrickColorPicker = (function()
 		local funcs = {}
 		local paletteCount = 0
-		local mouse = game.Players.LocalPlayer:GetMouse()
+		local mouse = service.Players.LocalPlayer:GetMouse()
 		local hexStartX = 4
 		local hexSizeX = 27
 		local hexTriangleStart = 1
@@ -4024,7 +4025,7 @@ local function main()
 
 			local closable = false
 			if self.CloseEvent then self.CloseEvent:Disconnect() end
-			self.CloseEvent = game.UserInputService.InputBegan:Connect(function(input)
+			self.CloseEvent = service.UserInputService.InputBegan:Connect(function(input)
 				if not closable or input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 
 				if not Lib.CheckMouseInGui(self.Gui.Frame) then
@@ -5688,7 +5689,7 @@ local function main()
 				self.ClickId = tick()
 
 				local release
-				release = game.UserInputService.InputEnded:Connect(function(input)
+				release = service.UserInputService.InputEnded:Connect(function(input)
 					if input.UserInputType == Enum.UserInputType["MouseButton"..button] then
 						release:Disconnect()
 						if Lib.CheckMouseInGui(item) and self.LastButton == button and self.LastItem == item then
