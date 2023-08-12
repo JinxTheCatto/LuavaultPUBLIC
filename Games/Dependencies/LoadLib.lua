@@ -5,6 +5,7 @@
 ]]
 
 -- Common Locals
+local plr = game.Players.LocalPlayer
 local Main,Lib,Apps,Settings -- Main Containers
 local Explorer, Properties, ScriptViewer, Notebook -- Major Apps
 local API,RMD,env,service,plr,create,createSimple -- Main Locals
