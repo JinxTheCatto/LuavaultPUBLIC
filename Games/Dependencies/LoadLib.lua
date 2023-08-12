@@ -7,7 +7,7 @@
 -- Common Locals
 local Main,Lib,Apps,Settings -- Main Containers
 local Explorer, Properties, ScriptViewer, Notebook -- Major Apps
-local API,RMD,env,game,plr,create,createSimple -- Main Locals
+local API,RMD,env,service,plr,create,createSimple -- Main Locals
 
 local function initDeps(data)
 	Main = data.Main
