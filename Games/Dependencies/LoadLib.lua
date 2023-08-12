@@ -20,7 +20,6 @@ local function initDeps(data)
 	RMD = data.RMD
 	env = data.env
 	service = game
-	plr = data.plr
 	create = data.create
 	createSimple = data.createSimple
 end
