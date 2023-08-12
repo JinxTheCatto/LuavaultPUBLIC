@@ -18,7 +18,7 @@ local function initDeps(data)
 	API = data.API
 	RMD = data.RMD
 	env = data.env
-	game = game
+	service = game
 	plr = data.plr
 	create = data.create
 	createSimple = data.createSimple
