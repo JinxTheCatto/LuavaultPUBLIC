@@ -5,7 +5,6 @@
 ]]
 
 -- Common Locals
-local plr = game.Players.LocalPlayer
 local Main,Lib,Apps,Settings -- Main Containers
 local Explorer, Properties, ScriptViewer, Notebook -- Major Apps
 local API,RMD,env,service,create,createSimple -- Main Locals
@@ -664,7 +663,7 @@ local function main()
 	Lib.ScrollBar = (function()
 		local funcs = {}
 		local user = game.UserInputService
-		local mouse = plr:GetMouse()
+		local mouse = game.Players.LocalPlayer:GetMouse()
 		local checkMouseInGui = Lib.CheckMouseInGui
 		local createArrow = Lib.CreateArrow
 
@@ -1072,7 +1071,7 @@ local function main()
 	Lib.Window = (function()
 		local funcs = {}
 		local static = {MinWidth = 200, FreeWidth = 200}
-		local mouse = plr:GetMouse()
+		local mouse = game.Players.LocalPlayer:GetMouse()
 		local sidesGui,alignIndicator
 		local visibleWindows = {}
 		local leftSide = {Width = 300, Windows = {}, ResizeCons = {}, Hidden = true}
@@ -2580,7 +2579,7 @@ local function main()
 		end
 		
 		local function setupMouseSelection(obj)
-			local mouse = plr:GetMouse()
+			local mouse = game.Players.LocalPlayer:GetMouse()
 			local codeFrame = obj.GuiElems.LinesFrame
 			local lines = obj.Lines
 			
